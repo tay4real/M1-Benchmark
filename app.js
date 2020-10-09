@@ -99,7 +99,6 @@ let questionNumber = [];
 
 const quizGameApp = () => {
   let quizGame = document.querySelector("#quiz-game");
-  const numberOfQuestions = questions.length;
 
   const section = document.createElement("section");
 
@@ -126,9 +125,18 @@ const quizGameApp = () => {
   section.appendChild(header);
   section.appendChild(questionContainer);
   quizGame.appendChild(section);
-  for (let i = 0; i < numberOfQuestions; i++) {}
-  console.log(numberOfQuestions);
 };
+
+let loadQuestions = () => {
+  const numberOfQuestions = questions.length;
+  for (let i = 0; i < numberOfQuestions; i++) {
+    console.log(questions[i]);
+  }
+};
+
+let nextQuestion = () => {};
+
+let prevQuestion = () => {};
 
 window.onload = function () {
   //IF YOU ARE DISPLAYING ALL THE QUESTIONS TOGETHER:
@@ -140,6 +148,7 @@ window.onload = function () {
   //when the user select the answer, pick the next question and remove this from the page after added in a varible the users' choice.
 
   quizGameApp();
+  loadQuestions();
 };
 
 //HOW TO calculate the result
