@@ -97,20 +97,36 @@ const questions = [
 let score = [];
 let questionNumber = [];
 
-const displayQuestion = () => {
+const quizGameApp = () => {
   let quizGame = document.querySelector("#quiz-game");
   const numberOfQuestions = questions.length;
-  for (let i = 0; i < numberOfQuestions; i++) {
-    const child = document.createElement("div"); // this will create an empty day cell
-    child.className = "bingo-cell"; // assigning the CSS class
 
-    const cell = document.createElement("h3");
-    const cellValue = i + 1;
-    cell.innerText = cellValue;
+  const section = document.createElement("section");
 
-    child.appendChild(cell);
-    bingoBoard.appendChild(child);
-  }
+  const header = document.createElement("h1");
+  header.innerText = "Quiz Game";
+
+  const questionContainer = document.createElement("div");
+  questionContainer.className = "questions";
+
+  const questionHeader = document.createElement("h3");
+  const question = document.createElement("h3");
+  question.id = "question";
+
+  const optionsContainer = document.createElement("div");
+  optionsContainer.className = "option-container";
+
+  const options = document.createElement("div");
+  options.className = "option";
+
+  optionsContainer.appendChild(options);
+  questionContainer.appendChild(questionHeader);
+  questionContainer.appendChild(question);
+  questionContainer.appendChild(optionsContainer);
+  section.appendChild(header);
+  section.appendChild(questionContainer);
+  quizGame.appendChild(section);
+  for (let i = 0; i < numberOfQuestions; i++) {}
   console.log(numberOfQuestions);
 };
 
@@ -123,7 +139,7 @@ window.onload = function () {
   //Display first question with a title + radio button
   //when the user select the answer, pick the next question and remove this from the page after added in a varible the users' choice.
 
-  displayQuestion();
+  quizGameApp();
 };
 
 //HOW TO calculate the result

@@ -19,3 +19,28 @@ h1 {
   display: flex;
   justify-content: space-around;
 }
+
+section {
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 50vh;
+  width: 50%;
+  padding-right: 2rem;
+  padding-left: 2rem;
+  border-radius: 10px;
+  margin-top: 100px;
+  margin-bottom: 50px;
+}
+
+.questions {
+  background-color: #ffffff;
+  border-left: 5px solid #1da1f2;
+  width: 80%;
+  margin: 3rem auto 0 auto;
+  padding: 1.5rem 2rem;
+}
+
+h1 {
+  text-align: center;
+  color: #f8f8f8;
+  font-size: 2rem;
+}
