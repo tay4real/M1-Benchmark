@@ -9,10 +9,11 @@ body {
   margin: 0 10%;
   font-size: 18px;
 }
+
 h1 {
-  font-size: larger;
-  font-weight: normal;
   text-align: center;
+  color: #f8f8f8;
+  font-size: 2rem;
 }
 #quiz-game {
   min-height: 100vh;
@@ -43,8 +44,7 @@ section {
   display: hide;
 }
 
-h1 {
-  text-align: center;
-  color: #f8f8f8;
-  font-size: 2rem;
+#options li {
+  list-style-type: none;
+  display: none;
 }

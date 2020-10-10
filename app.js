@@ -109,14 +109,15 @@ const quizGameApp = () => {
   questionContainer.className = "questions";
 
   const questionHeader = document.createElement("h3");
+  questionHeader.id = "category";
   const question = document.createElement("h3");
   question.id = "question";
 
   const optionsContainer = document.createElement("div");
-  optionsContainer.className = "option-container";
+  optionsContainer.id = "option-container";
 
-  const options = document.createElement("div");
-  options.className = "option";
+  const options = document.createElement("ul");
+  options.id = "options";
 
   optionsContainer.appendChild(options);
   questionContainer.appendChild(questionHeader);
@@ -128,10 +129,70 @@ const quizGameApp = () => {
 };
 
 let loadQuestions = () => {
+  const questionContainer = document.querySelector(".questions");
+  const questionHeader = document.querySelector("#category");
+  const question = document.querySelector("#question");
+  const optionsContainer = document.querySelector("#option-container");
+  const options = document.querySelector("#options");
+
   const numberOfQuestions = questions.length;
+
   for (let i = 0; i < numberOfQuestions; i++) {
-    console.log(questions[i]);
+    questionHeader.innerHTML = `<h3>${
+      questions[i].category
+    } <br><br> <span>Question ${i + 1}</span></h3>`;
+    question.innerText = questions[i].question;
+    let type = questions[i].type;
+    let optionsList = [];
+    switch (type) {
+      case "multiple":
+        optionsList.push(questions[i].correct_answer); // add correct answer to the options array
+
+        for (let option of questions[i].incorrect_answers) {
+          optionsList.push(option); // add incorrect answers to the option array
+        }
+        const shuffleOptions = shuffle(optionsList);
+        for (let i = 0; i < shuffleOptions.length; i++) {
+          const option = document.createElement("li");
+
+          option.innerHTML = `<input type="radio" id="option${
+            i + 1
+          }" name="option${i + 1}" value="${shuffleOptions[i]}"
+          >
+   <label for="option${i + 1}">${shuffleOptions[i]}</label>`;
+          option.style.display = "block";
+          options.appendChild(option);
+        }
+        break;
+      case "boolean":
+        break;
+      default:
+        return;
+        break;
+    }
   }
+
+  return questions;
+};
+
+let shuffle = (array) => {
+  let currentIndex = array.length,
+    temporaryValue,
+    randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 };
 
 let nextQuestion = () => {};
@@ -149,6 +210,7 @@ window.onload = function () {
 
   quizGameApp();
   loadQuestions();
+  console.log(shuffleOptions(arr));
 };
 
 //HOW TO calculate the result
