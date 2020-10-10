@@ -96,21 +96,42 @@ const questions = [
 
 const user = {
   difficultyLevel: "",
-  type: "",
+  numberOfQuestions: "",
   question: [],
   correct_answer: [],
   userChoice: [],
   scorePoint: [],
+  nextQuestion: "",
+};
+
+const isUserSet = () => {
+  if (user.difficultyLevel !== "" && user.numberOfQuestions !== "") {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 const quizGameApp = () => {
   let quizGame = document.querySelector("#quiz-game");
-
   const section = document.createElement("section");
-
   const header = document.createElement("h1");
   header.innerText = "Quiz Game";
 
+  section.appendChild(header);
+
+  if (isUserSet()) {
+    const quesContainer = questionContainer();
+    section.appendChild(quesContainer);
+  } else {
+    const start = startScreen();
+    section.appendChild(start);
+  }
+  quizGame.appendChild(section);
+};
+
+const questionContainer = () => {
+  // return container to hold question
   const questionContainer = document.createElement("div");
   questionContainer.className = "questions";
 
@@ -129,9 +150,137 @@ const quizGameApp = () => {
   questionContainer.appendChild(questionHeader);
   questionContainer.appendChild(question);
   questionContainer.appendChild(optionsContainer);
-  section.appendChild(header);
-  section.appendChild(questionContainer);
-  quizGame.appendChild(section);
+  return questionContainer;
+};
+
+const startScreen = () => {
+  const startScreenContainer = document.createElement("div");
+  startScreenContainer.id = "start-screen";
+  const selectQuestionNumber = chooseNumberOfQuestions();
+  const selectDifficultyLevel = chooseDifficultyLevel();
+  const startGame = startGameButton();
+  startScreenContainer.appendChild(selectQuestionNumber);
+  startScreenContainer.appendChild(selectDifficultyLevel);
+  startScreenContainer.appendChild(startGame);
+  return startScreenContainer;
+};
+
+const chooseNumberOfQuestions = () => {
+  // return options to select number of questions
+  const numberOfQuestionsContainer = document.createElement("div");
+  numberOfQuestionsContainer.className = "grid-2";
+  const selectNumberOfQuestions = document.createElement("select");
+  selectNumberOfQuestions.id = "selectNumberOfQuestions";
+
+  for (let i = 0; i <= questions.length; i++) {
+    if (i === 0) {
+      const opt = document.createElement("option");
+      opt.value = `${i}`;
+      opt.innerText = "Select Number of Questions";
+      selectNumberOfQuestions.appendChild(opt);
+    } else {
+      const opt = document.createElement("option");
+      opt.value = `${i}`;
+      opt.innerText = `${i}`;
+      selectNumberOfQuestions.appendChild(opt);
+    }
+  }
+
+  numberOfQuestionsContainer.appendChild(selectNumberOfQuestions);
+  return numberOfQuestionsContainer;
+};
+
+const chooseDifficultyLevel = () => {
+  // // return options to select difficulty level
+  // const difficultyContainer = document.createElement("div");
+  // difficultyContainer.className = "grid-2";
+
+  // const selectDifficultyLevel = document.createElement("select");
+  // selectDifficultyLevel.id = "difficultyLevel";
+  // let difficultyLevel = "";
+  // for (let i = 0; i <= 3; i++) {
+  //   switch (i) {
+  //     case 0:
+  //       difficultyLevel = document.createElement("option");
+  //       difficultyLevel.value = "0";
+  //       difficultyLevel.innerText = "Select Difficulty Level";
+  //       selectDifficultyLevel.appendChild(difficultyLevel);
+  //       break;
+  //     case 1:
+  //       difficultyLevel = document.createElement("option");
+  //       difficultyLevel.value = "1";
+  //       difficultyLevel.innerText = "Easy";
+  //       selectDifficultyLevel.appendChild(difficultyLevel);
+  //       break;
+  //     case 2:
+  //       difficultyLevel = document.createElement("option");
+  //       difficultyLevel.value = "2";
+  //       difficultyLevel.innerText = "Medium";
+  //       selectDifficultyLevel.appendChild(difficultyLevel);
+  //       break;
+  //     case 3:
+  //       difficultyLevel = document.createElement("option");
+  //       difficultyLevel.value = "2";
+  //       difficultyLevel.innerText = "Hard";
+  //       selectDifficultyLevel.appendChild(difficultyLevel);
+  //       break;
+  //     default:
+  //       return;
+  //   }
+  // }
+
+  // return difficultyContainer.appendChild(selectDifficultyLevel);
+
+  // return options to select number of questions
+  const difficultyContainer = document.createElement("div");
+  difficultyContainer.className = "grid-2";
+  const selectDifficultyLevel = document.createElement("select");
+  selectDifficultyLevel.id = "difficultyLevel";
+
+  for (let i = 0; i <= 3; i++) {
+    switch (i) {
+      case 0:
+        difficultyLevel = document.createElement("option");
+        difficultyLevel.value = "0";
+        difficultyLevel.innerText = "Select Difficulty Level";
+        selectDifficultyLevel.appendChild(difficultyLevel);
+        break;
+      case 1:
+        difficultyLevel = document.createElement("option");
+        difficultyLevel.value = "1";
+        difficultyLevel.innerText = "Easy";
+        selectDifficultyLevel.appendChild(difficultyLevel);
+        break;
+      case 2:
+        difficultyLevel = document.createElement("option");
+        difficultyLevel.value = "2";
+        difficultyLevel.innerText = "Medium";
+        selectDifficultyLevel.appendChild(difficultyLevel);
+        break;
+      case 3:
+        difficultyLevel = document.createElement("option");
+        difficultyLevel.value = "2";
+        difficultyLevel.innerText = "Hard";
+        selectDifficultyLevel.appendChild(difficultyLevel);
+        break;
+      default:
+        return;
+    }
+  }
+
+  difficultyContainer.appendChild(selectDifficultyLevel);
+  return difficultyContainer;
+};
+
+const startGameButton = () => {
+  //return button to start game
+  const startGameButtonContainer = document.createElement("div");
+  startGameButtonContainer.className = "grid-1";
+  const startGameButton = document.createElement("input");
+  startGameButton.type = "submit";
+  startGameButton.value = "Start Game";
+
+  return startGameButtonContainer.appendChild(startGameButton);
 };
 
 let loadQuestions = (questionNumber) => {
@@ -212,7 +361,7 @@ let shuffle = (array) => {
   return array;
 };
 
-let nextQuestion = () => {};
+let nextQuestion = (n) => {};
 
 let prevQuestion = () => {};
 
