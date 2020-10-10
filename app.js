@@ -94,8 +94,14 @@ const questions = [
   },
 ];
 
-let score = [];
-let questionNumber = [];
+const user = {
+  difficultyLevel: "",
+  type: "",
+  question: [],
+  correct_answer: [],
+  userChoice: [],
+  scorePoint: [],
+};
 
 const quizGameApp = () => {
   let quizGame = document.querySelector("#quiz-game");
@@ -128,7 +134,7 @@ const quizGameApp = () => {
   quizGame.appendChild(section);
 };
 
-let loadQuestions = () => {
+let loadQuestions = (questionNumber) => {
   const questionContainer = document.querySelector(".questions");
   const questionHeader = document.querySelector("#category");
   const question = document.querySelector("#question");
@@ -137,18 +143,19 @@ let loadQuestions = () => {
 
   const numberOfQuestions = questions.length;
 
-  for (let i = 0; i < numberOfQuestions; i++) {
+  if (questionNumber <= numberOfQuestions) {
     questionHeader.innerHTML = `<h3>${
-      questions[i].category
-    } <br><br> <span>Question ${i + 1}</span></h3>`;
-    question.innerText = questions[i].question;
-    let type = questions[i].type;
+      questions[questionNumber - 1].category
+    } </h3><p><small>Question ${questionNumber} of ${numberOfQuestions}</small></p>`;
+
+    question.innerText = questions[questionNumber - 1].question;
+    let type = questions[questionNumber - 1].type;
     let optionsList = [];
     switch (type) {
       case "multiple":
-        optionsList.push(questions[i].correct_answer); // add correct answer to the options array
+        optionsList.push(questions[questionNumber - 1].correct_answer); // add correct answer to the options array
 
-        for (let option of questions[i].incorrect_answers) {
+        for (let option of questions[questionNumber - 1].incorrect_answers) {
           optionsList.push(option); // add incorrect answers to the option array
         }
         const shuffleOptions = shuffle(optionsList);
@@ -157,22 +164,32 @@ let loadQuestions = () => {
 
           option.innerHTML = `<input type="radio" id="option${
             i + 1
-          }" name="option${i + 1}" value="${shuffleOptions[i]}"
-          >
-   <label for="option${i + 1}">${shuffleOptions[i]}</label>`;
+          }" name="user_answer" value="${shuffleOptions[i]}">
+              <label for="option${i + 1}">${shuffleOptions[i]}</label>`;
           option.style.display = "block";
           options.appendChild(option);
         }
         break;
       case "boolean":
+        optionsList.push(questions[questionNumber - 1].correct_answer); // add correct answer to the options array
+        optionsList.push(questions[questionNumber - 1].incorrect_answers[0]); // add incorrect answer to the options array
+        const booleanOptions = shuffle(optionsList);
+        for (let i = 0; i < booleanOptions.length; i++) {
+          const option = document.createElement("li");
+
+          option.innerHTML = `<input type="radio" id="option${
+            i + 1
+          }" name="user_answer" value="${booleanOptions[i]}">
+            <label for="option${i + 1}">${booleanOptions[i]}</label>`;
+          option.style.display = "block";
+          options.appendChild(option);
+        }
         break;
       default:
         return;
         break;
     }
   }
-
-  return questions;
 };
 
 let shuffle = (array) => {
@@ -209,8 +226,7 @@ window.onload = function () {
   //when the user select the answer, pick the next question and remove this from the page after added in a varible the users' choice.
 
   quizGameApp();
-  loadQuestions();
-  console.log(shuffleOptions(arr));
+  loadQuestions(4);
 };
 
 //HOW TO calculate the result
