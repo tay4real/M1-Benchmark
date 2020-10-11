@@ -98,10 +98,11 @@ const user = {
   difficultyLevel: "",
   numberOfQuestions: "",
   question: [],
+  options: [],
   correct_answer: [],
   userChoice: [],
-  scorePoint: [],
-  nextQuestion: "",
+  scorePoint: 0,
+  nextQuestion: 1,
 };
 
 const isUserSet = () => {
@@ -112,28 +113,10 @@ const isUserSet = () => {
   }
 };
 
-const quizGameApp = () => {
-  let quizGame = document.querySelector("#quiz-game");
-  const section = document.createElement("section");
-  const header = document.createElement("h1");
-  header.innerText = "Quiz Game";
-
-  section.appendChild(header);
-
-  if (isUserSet()) {
-    const quesContainer = questionContainer();
-    section.appendChild(quesContainer);
-  } else {
-    const start = startScreen();
-    section.appendChild(start);
-  }
-  quizGame.appendChild(section);
-};
-
 const questionContainer = () => {
   // return container to hold question
   const questionContainer = document.createElement("div");
-  questionContainer.className = "questions";
+  questionContainer.id = "question-container";
 
   const questionHeader = document.createElement("h3");
   questionHeader.id = "category";
@@ -171,6 +154,7 @@ const chooseNumberOfQuestions = () => {
   numberOfQuestionsContainer.className = "grid-2";
   const selectNumberOfQuestions = document.createElement("select");
   selectNumberOfQuestions.id = "selectNumberOfQuestions";
+  selectNumberOfQuestions.name = "selectNumberOfQuestions";
 
   for (let i = 0; i <= questions.length; i++) {
     if (i === 0) {
@@ -191,51 +175,13 @@ const chooseNumberOfQuestions = () => {
 };
 
 const chooseDifficultyLevel = () => {
-  // // return options to select difficulty level
-  // const difficultyContainer = document.createElement("div");
-  // difficultyContainer.className = "grid-2";
+  // return options to select difficulty level
 
-  // const selectDifficultyLevel = document.createElement("select");
-  // selectDifficultyLevel.id = "difficultyLevel";
-  // let difficultyLevel = "";
-  // for (let i = 0; i <= 3; i++) {
-  //   switch (i) {
-  //     case 0:
-  //       difficultyLevel = document.createElement("option");
-  //       difficultyLevel.value = "0";
-  //       difficultyLevel.innerText = "Select Difficulty Level";
-  //       selectDifficultyLevel.appendChild(difficultyLevel);
-  //       break;
-  //     case 1:
-  //       difficultyLevel = document.createElement("option");
-  //       difficultyLevel.value = "1";
-  //       difficultyLevel.innerText = "Easy";
-  //       selectDifficultyLevel.appendChild(difficultyLevel);
-  //       break;
-  //     case 2:
-  //       difficultyLevel = document.createElement("option");
-  //       difficultyLevel.value = "2";
-  //       difficultyLevel.innerText = "Medium";
-  //       selectDifficultyLevel.appendChild(difficultyLevel);
-  //       break;
-  //     case 3:
-  //       difficultyLevel = document.createElement("option");
-  //       difficultyLevel.value = "2";
-  //       difficultyLevel.innerText = "Hard";
-  //       selectDifficultyLevel.appendChild(difficultyLevel);
-  //       break;
-  //     default:
-  //       return;
-  //   }
-  // }
-
-  // return difficultyContainer.appendChild(selectDifficultyLevel);
-
-  // return options to select number of questions
   const difficultyContainer = document.createElement("div");
   difficultyContainer.className = "grid-2";
   const selectDifficultyLevel = document.createElement("select");
   selectDifficultyLevel.id = "difficultyLevel";
+  selectDifficultyLevel.name = "difficultyLevel";
 
   for (let i = 0; i <= 3; i++) {
     switch (i) {
@@ -259,7 +205,7 @@ const chooseDifficultyLevel = () => {
         break;
       case 3:
         difficultyLevel = document.createElement("option");
-        difficultyLevel.value = "2";
+        difficultyLevel.value = "3";
         difficultyLevel.innerText = "Hard";
         selectDifficultyLevel.appendChild(difficultyLevel);
         break;
@@ -277,8 +223,10 @@ const startGameButton = () => {
   const startGameButtonContainer = document.createElement("div");
   startGameButtonContainer.className = "grid-1";
   const startGameButton = document.createElement("input");
+  startGameButton.id = "start";
   startGameButton.type = "submit";
   startGameButton.value = "Start Game";
+  startGameButton.onclick = setUserPreference;
 
   return startGameButtonContainer.appendChild(startGameButton);
 };
@@ -298,16 +246,22 @@ let loadQuestions = (questionNumber) => {
     } </h3><p><small>Question ${questionNumber} of ${numberOfQuestions}</small></p>`;
 
     question.innerText = questions[questionNumber - 1].question;
+    // save question in user object
+    user.question.push(questions[questionNumber - 1].question);
+
     let type = questions[questionNumber - 1].type;
     let optionsList = [];
     switch (type) {
       case "multiple":
         optionsList.push(questions[questionNumber - 1].correct_answer); // add correct answer to the options array
-
+        // save correct answer in the user object
+        user.correct_answer.push(questions[questionNumber - 1].correct_answer);
         for (let option of questions[questionNumber - 1].incorrect_answers) {
           optionsList.push(option); // add incorrect answers to the option array
         }
         const shuffleOptions = shuffle(optionsList);
+        // save options in user object
+        user.options.push(shuffleOptions);
         for (let i = 0; i < shuffleOptions.length; i++) {
           const option = document.createElement("li");
 
@@ -323,6 +277,8 @@ let loadQuestions = (questionNumber) => {
         optionsList.push(questions[questionNumber - 1].correct_answer); // add correct answer to the options array
         optionsList.push(questions[questionNumber - 1].incorrect_answers[0]); // add incorrect answer to the options array
         const booleanOptions = shuffle(optionsList);
+        // save options in user object
+        user.options.push(booleanOptions);
         for (let i = 0; i < booleanOptions.length; i++) {
           const option = document.createElement("li");
 
@@ -361,6 +317,100 @@ let shuffle = (array) => {
   return array;
 };
 
+const setUserPreference = () => {
+  let difficultyLevel = document.querySelector("#difficultyLevel");
+  let numberOfQuestions = document.querySelector("#selectNumberOfQuestions");
+  if (difficultyLevel.value !== "0" && numberOfQuestions.value !== "0") {
+    user.numberOfQuestions = numberOfQuestions;
+    switch (parseInt(difficultyLevel.value)) {
+      case 1:
+        user.difficultyLevel = "easy";
+        break;
+      case 2:
+        user.difficultyLevel = "medium";
+        break;
+      case 3:
+        user.difficultyLevel = "hard";
+        break;
+      default:
+        return;
+    }
+    document.getElementById("question-container").style.display = "block";
+    document.getElementById("start-screen").style.display = "none";
+
+    // load first question
+    loadQuestions(user.nextQuestion);
+
+    // call onclick event on user choice
+  } else {
+    alert("Select Number of Questions and Difficulty Level to Begin!");
+    return false;
+  }
+};
+
+let getUserChoice = (name) => {
+  let val;
+  // get list of radio buttons with specified name
+  var radios = document.getElementsByName(name);
+
+  // loop through list of radio buttons
+  for (let i = 0, len = radios.length; i < len; i++) {
+    if (radios[i].checked) {
+      // radio checked?
+      val = radios[i].value; // if so, hold its value in val
+      break; // and break out of for loop
+    }
+  }
+  return val; // return value of checked radio or undefined if none checked
+};
+
+let result = (qn) => {
+  // qn stands for question number
+  // will take user response and compare it with correct answer
+  let userChoice = getUserChoice("user_answer");
+  // save user choice in the user object
+  user.userChoice = userChoice;
+
+  let correct_answer = user.correct_answer;
+  // if user choice matches correct answer, user scores 1 point
+  // else user scores 0 point
+  const questionContainer = document.getElementById("question-container");
+  let feedback = document.createElement("div");
+  let correctAnswer = document.createElement("div");
+
+  questionContainer.appendChild(feedback);
+  if (user.userChoice === correct_answer[qn - 1]) {
+    user.scorePoint += 1;
+    feedback.innerText = userChoice;
+    feedback.style.backgroundColor = "#22bb33";
+    feedback.style.color = "#ffffff";
+    feedback.style.padding = "10px";
+  } else {
+    user.scorePoint += 0;
+    feedback.innerText = userChoice;
+    feedback.style.backgroundColor = "#bb2124";
+    feedback.style.color = "#ffffff";
+    feedback.style.padding = "10px";
+    feedback.style.marginBottom = "5px";
+    correctAnswer.innerText = correct_answer[qn - 1];
+    correctAnswer.style.borderColor = "#22bb33";
+    correctAnswer.style.borderWidth = "4px";
+    correctAnswer.style.borderStyle = "solid";
+    correctAnswer.style.color = "#222222";
+    correctAnswer.style.padding = "10px";
+    questionContainer.appendChild(correctAnswer);
+  }
+  const nextQues = document.createElement("input");
+  nextQues.id = "nextques";
+  nextQues.type = "submit";
+  nextQues.value = "Next Question";
+  questionContainer.appendChild(nextQues);
+  // displays user option with green if correct
+
+  // display user option with red if wrong and also display the right answer
+  // display a next question button
+};
+
 let nextQuestion = (n) => {};
 
 let prevQuestion = () => {};
@@ -373,9 +423,20 @@ window.onload = function () {
   //IF YOU ARE DISPLAYING ONE QUESTION AT A TIME
   //Display first question with a title + radio button
   //when the user select the answer, pick the next question and remove this from the page after added in a varible the users' choice.
+  let quizGame = document.querySelector("#quiz-game");
+  const section = document.createElement("section");
+  const header = document.createElement("h1");
+  header.innerText = "Quiz Game";
+  const start = startScreen();
+  const quesContainer = questionContainer();
 
-  quizGameApp();
-  loadQuestions(4);
+  quesContainer.style.display = "none";
+
+  section.appendChild(header);
+  section.appendChild(start);
+  section.appendChild(quesContainer);
+
+  quizGame.appendChild(section);
 };
 
 //HOW TO calculate the result
