@@ -97,12 +97,13 @@ const questions = [
 const user = {
   difficultyLevel: "",
   numberOfQuestions: "",
+  currentType: "",
   question: [],
   options: [],
   correct_answer: [],
   userChoice: [],
   scorePoint: 0,
-  nextQuestion: 1,
+  currentQuestion: 1,
 };
 
 const isUserSet = () => {
@@ -113,191 +114,118 @@ const isUserSet = () => {
   }
 };
 
-const questionContainer = () => {
-  // return container to hold question
-  const questionContainer = document.createElement("div");
-  questionContainer.id = "question-container";
-
-  const questionHeader = document.createElement("h3");
-  questionHeader.id = "category";
-  const question = document.createElement("h3");
-  question.id = "question";
-
-  const optionsContainer = document.createElement("div");
-  optionsContainer.id = "option-container";
-
-  const options = document.createElement("ul");
-  options.id = "options";
-
-  optionsContainer.appendChild(options);
-  questionContainer.appendChild(questionHeader);
-  questionContainer.appendChild(question);
-  questionContainer.appendChild(optionsContainer);
-  return questionContainer;
+// Create Elements
+const createDiv = (setID, setClassName) => {
+  let div = document.createElement("div");
+  div.id = setID;
+  div.className = setClassName;
+  return div;
 };
 
-const startScreen = () => {
-  const startScreenContainer = document.createElement("div");
-  startScreenContainer.id = "start-screen";
-  const selectQuestionNumber = chooseNumberOfQuestions();
-  const selectDifficultyLevel = chooseDifficultyLevel();
-  const startGame = startGameButton();
-  startScreenContainer.appendChild(selectQuestionNumber);
-  startScreenContainer.appendChild(selectDifficultyLevel);
-  startScreenContainer.appendChild(startGame);
-  return startScreenContainer;
+const createSpan = (setID) => {
+  let span = document.createElement("span");
+  span.id = setID;
+  return span;
 };
 
-const chooseNumberOfQuestions = () => {
-  // return options to select number of questions
-  const numberOfQuestionsContainer = document.createElement("div");
-  numberOfQuestionsContainer.className = "grid-2";
-  const selectNumberOfQuestions = document.createElement("select");
-  selectNumberOfQuestions.id = "selectNumberOfQuestions";
-  selectNumberOfQuestions.name = "selectNumberOfQuestions";
-
-  for (let i = 0; i <= questions.length; i++) {
-    if (i === 0) {
-      const opt = document.createElement("option");
-      opt.value = `${i}`;
-      opt.innerText = "Select Number of Questions";
-      selectNumberOfQuestions.appendChild(opt);
-    } else {
-      const opt = document.createElement("option");
-      opt.value = `${i}`;
-      opt.innerText = `${i}`;
-      selectNumberOfQuestions.appendChild(opt);
-    }
-  }
-
-  numberOfQuestionsContainer.appendChild(selectNumberOfQuestions);
-  return numberOfQuestionsContainer;
+const createSection = () => {
+  return document.createElement("section");
 };
 
-const chooseDifficultyLevel = () => {
-  // return options to select difficulty level
+const createHeader1 = () => {
+  let h1 = document.createElement("h1");
 
-  const difficultyContainer = document.createElement("div");
-  difficultyContainer.className = "grid-2";
-  const selectDifficultyLevel = document.createElement("select");
-  selectDifficultyLevel.id = "difficultyLevel";
-  selectDifficultyLevel.name = "difficultyLevel";
-
-  for (let i = 0; i <= 3; i++) {
-    switch (i) {
-      case 0:
-        difficultyLevel = document.createElement("option");
-        difficultyLevel.value = "0";
-        difficultyLevel.innerText = "Select Difficulty Level";
-        selectDifficultyLevel.appendChild(difficultyLevel);
-        break;
-      case 1:
-        difficultyLevel = document.createElement("option");
-        difficultyLevel.value = "1";
-        difficultyLevel.innerText = "Easy";
-        selectDifficultyLevel.appendChild(difficultyLevel);
-        break;
-      case 2:
-        difficultyLevel = document.createElement("option");
-        difficultyLevel.value = "2";
-        difficultyLevel.innerText = "Medium";
-        selectDifficultyLevel.appendChild(difficultyLevel);
-        break;
-      case 3:
-        difficultyLevel = document.createElement("option");
-        difficultyLevel.value = "3";
-        difficultyLevel.innerText = "Hard";
-        selectDifficultyLevel.appendChild(difficultyLevel);
-        break;
-      default:
-        return;
-    }
-  }
-
-  difficultyContainer.appendChild(selectDifficultyLevel);
-  return difficultyContainer;
+  return h1;
 };
 
-const startGameButton = () => {
-  //return button to start game
-  const startGameButtonContainer = document.createElement("div");
-  startGameButtonContainer.className = "grid-1";
-  const startGameButton = document.createElement("input");
-  startGameButton.id = "start";
-  startGameButton.type = "submit";
-  startGameButton.value = "Start Game";
-  startGameButton.onclick = setUserPreference;
-
-  return startGameButtonContainer.appendChild(startGameButton);
+const createHeader2 = (setID, setClassName) => {
+  let h2 = document.createElement("h2");
+  h2.id = setID;
+  h2.className = setClassName;
+  return h2;
 };
 
-let loadQuestions = (questionNumber) => {
-  const questionContainer = document.querySelector(".questions");
-  const questionHeader = document.querySelector("#category");
-  const question = document.querySelector("#question");
-  const optionsContainer = document.querySelector("#option-container");
-  const options = document.querySelector("#options");
-
-  const numberOfQuestions = questions.length;
-
-  if (questionNumber <= numberOfQuestions) {
-    questionHeader.innerHTML = `<h3>${
-      questions[questionNumber - 1].category
-    } </h3><p><small>Question ${questionNumber} of ${numberOfQuestions}</small></p>`;
-
-    question.innerText = questions[questionNumber - 1].question;
-    // save question in user object
-    user.question.push(questions[questionNumber - 1].question);
-
-    let type = questions[questionNumber - 1].type;
-    let optionsList = [];
-    switch (type) {
-      case "multiple":
-        optionsList.push(questions[questionNumber - 1].correct_answer); // add correct answer to the options array
-        // save correct answer in the user object
-        user.correct_answer.push(questions[questionNumber - 1].correct_answer);
-        for (let option of questions[questionNumber - 1].incorrect_answers) {
-          optionsList.push(option); // add incorrect answers to the option array
-        }
-        const shuffleOptions = shuffle(optionsList);
-        // save options in user object
-        user.options.push(shuffleOptions);
-        for (let i = 0; i < shuffleOptions.length; i++) {
-          const option = document.createElement("li");
-
-          option.innerHTML = `<input type="radio" id="option${
-            i + 1
-          }" name="user_answer" value="${shuffleOptions[i]}">
-              <label for="option${i + 1}">${shuffleOptions[i]}</label>`;
-          option.style.display = "block";
-          options.appendChild(option);
-        }
-        break;
-      case "boolean":
-        optionsList.push(questions[questionNumber - 1].correct_answer); // add correct answer to the options array
-        optionsList.push(questions[questionNumber - 1].incorrect_answers[0]); // add incorrect answer to the options array
-        const booleanOptions = shuffle(optionsList);
-        // save options in user object
-        user.options.push(booleanOptions);
-        for (let i = 0; i < booleanOptions.length; i++) {
-          const option = document.createElement("li");
-
-          option.innerHTML = `<input type="radio" id="option${
-            i + 1
-          }" name="user_answer" value="${booleanOptions[i]}">
-            <label for="option${i + 1}">${booleanOptions[i]}</label>`;
-          option.style.display = "block";
-          options.appendChild(option);
-        }
-        break;
-      default:
-        return;
-        break;
-    }
-  }
+const createHeader3 = (setID, setClassName) => {
+  let h3 = document.createElement("h3");
+  h3.id = setID;
+  h3.className = setClassName;
+  return h3;
 };
 
-let shuffle = (array) => {
+const createParagraph = (setID, setClassName) => {
+  let para = document.createElement("p");
+  p.id = setID;
+  p.className = setClassName;
+  return para;
+};
+
+const createUnorderedList = (setID) => {
+  let ul = document.createElement("ul");
+  ul.id = setID;
+
+  return ul;
+};
+
+const createListItems = () => {
+  return document.createElement("li");
+};
+
+const createRadioInput = (setID, setName, setValue) => {
+  let radio = document.createElement("input");
+  radio.type = "radio";
+  radio.id = setID;
+  radio.name = setName;
+  radio.value = setValue;
+  return radio;
+};
+
+const createRadioInputLabel = (setFor) => {
+  let label = document.createElement("label");
+  label.htmlFor = setFor;
+  return label;
+};
+
+const createComboBox = (setID, setName) => {
+  let cb = document.createElement("select");
+  cb.id = setID;
+  cb.name = setName;
+  return cb;
+};
+
+const createComboBoxOption = () => {
+  let cbOption = document.createElement("option");
+  return cbOption;
+};
+
+const createInputButton = (setID, setType, setValue) => {
+  let button = document.createElement("input");
+  button.id = setID;
+  button.type = setType;
+  button.value = setValue;
+  return button;
+};
+
+/****************  Initialize Game ********************/
+let quizGame = document.querySelector("#quiz-game");
+let section = createSection();
+let header = createHeader1();
+
+const initGame = () => {
+  // return quizGame
+  header.innerText = "Quiz Game";
+  section.appendChild(header);
+  return quizGame.appendChild(section);
+};
+
+/****************  Helper Functions ********************/
+
+// returns Total Number of Questions from Question Bank
+const getTotalNumberOfQuestions = (array) => {
+  return array.length;
+};
+
+// Shuffles an array
+const shuffle = (array) => {
   let currentIndex = array.length,
     temporaryValue,
     randomIndex;
@@ -317,103 +245,280 @@ let shuffle = (array) => {
   return array;
 };
 
-const setUserPreference = () => {
-  let difficultyLevel = document.querySelector("#difficultyLevel");
-  let numberOfQuestions = document.querySelector("#selectNumberOfQuestions");
-  if (difficultyLevel.value !== "0" && numberOfQuestions.value !== "0") {
-    user.numberOfQuestions = numberOfQuestions;
-    switch (parseInt(difficultyLevel.value)) {
-      case 1:
-        user.difficultyLevel = "easy";
-        break;
-      case 2:
-        user.difficultyLevel = "medium";
-        break;
-      case 3:
-        user.difficultyLevel = "hard";
-        break;
-      default:
-        return;
+/****************  Start Game  ********************/
+
+const startScreenContainer = createDiv("start-screen", "");
+const questionNumberComboBox = createComboBox("qn-combo", "num-of-ques");
+const difficultyLevelCombox = createComboBox("dl-combo", "difficulty-level");
+const startButton = createInputButton("start", "submit", "Start Game");
+const totalNumOfQuestions = getTotalNumberOfQuestions(questions);
+
+const startGameScreen = () => {
+  // return startScreenContainer
+
+  for (let i = 0; i <= totalNumOfQuestions; i++) {
+    if (i === 0) {
+      let questionNumberComboBoxOption = createComboBoxOption();
+      questionNumberComboBoxOption.value = `${i}`;
+      questionNumberComboBoxOption.innerText = "Select Number of Questions";
+      questionNumberComboBox.appendChild(questionNumberComboBoxOption);
+    } else {
+      let questionNumberComboBoxOption = createComboBoxOption();
+      questionNumberComboBoxOption.value = `${i}`;
+      questionNumberComboBoxOption.innerText = `${i}`;
+      questionNumberComboBox.appendChild(questionNumberComboBoxOption);
     }
-    document.getElementById("question-container").style.display = "block";
-    document.getElementById("start-screen").style.display = "none";
+  }
 
-    // load first question
-    loadQuestions(user.nextQuestion);
+  for (let i = 0; i <= 1; i++) {
+    if (i === 0) {
+      let difficultyLevelComboxOption = createComboBoxOption();
+      difficultyLevelComboxOption.value = `${i}`;
+      difficultyLevelComboxOption.innerText = "Select Difficulty Level";
+      difficultyLevelCombox.appendChild(difficultyLevelComboxOption);
+    } else {
+      let difficultyLevelComboxOption = createComboBoxOption();
+      difficultyLevelComboxOption.value = "easy";
+      difficultyLevelComboxOption.innerText = "Easy";
+      difficultyLevelCombox.appendChild(difficultyLevelComboxOption);
+    }
+  }
+  startButton.addEventListener("click", startGame);
+  startScreenContainer.appendChild(questionNumberComboBox);
+  startScreenContainer.appendChild(difficultyLevelCombox);
+  startScreenContainer.appendChild(startButton);
+  return startScreenContainer;
+};
 
-    // call onclick event on user choice
+const startGame = () => {
+  let difficultyLevel = document.querySelector("#dl-combo");
+  let numofQues = document.querySelector("#qn-combo");
+  if (difficultyLevel.value !== "0" && numofQues.value !== "0") {
+    user.numberOfQuestions = numofQues.value;
+    user.difficultyLevel = difficultyLevel.value;
+
+    initGame().removeChild(startGameScreen());
+    initGame().appendChild(playGameScreen());
+    loadQuestions(user.currentQuestion);
+    //document.getElementById("question-container").style.display = "block";
+    //document.getElementById("start-screen").style.display = "none";
+
+    // // load first question
+    // loadQuestions(user.currentQuestion);
+
+    // // call onclick event on user choice
+    // displayResult();
+
+    // get list of radio buttons with specified name
   } else {
     alert("Select Number of Questions and Difficulty Level to Begin!");
     return false;
   }
 };
 
-let getUserChoice = (name) => {
+/****************  Play Game  ********************/
+const playGameContainer = createDiv("play-game", "");
+const category = createHeader3("category", "");
+const question = createHeader3("question", "");
+const optionsContainer = createDiv("option-container");
+const optionList = createUnorderedList("option-list");
+
+const playGameScreen = () => {
+  optionsContainer.appendChild(optionList);
+  playGameContainer.appendChild(category);
+  playGameContainer.appendChild(question);
+  playGameContainer.appendChild(optionsContainer);
+
+  return playGameContainer;
+};
+
+const loadQuestions = (questionNumber) => {
+  const getOptionList = document.querySelector("#option-list");
+  const numofQues = user.numberOfQuestions;
+
+  if (questionNumber <= numofQues) {
+    category.innerHTML = `<h2>${
+      questions[questionNumber - 1].category
+    } </h2><p><small>Question ${questionNumber} of ${numofQues}</small></p>`;
+
+    question.innerText = questions[questionNumber - 1].question;
+    // save question in user object
+    user.question.push(questions[questionNumber - 1].question);
+
+    user.currentType = questions[questionNumber - 1].type;
+    let tempOptionsList = [];
+    switch (user.currentType) {
+      case "multiple":
+        tempOptionsList.push(questions[questionNumber - 1].correct_answer); // add correct answer to the temporary Option List array
+        user.correct_answer.push(questions[questionNumber - 1].correct_answer); // save correct answer in the user object
+        for (let option of questions[questionNumber - 1].incorrect_answers) {
+          tempOptionsList.push(option); // add incorrect answers to the option array
+        }
+        const shuffleOptions = shuffle(tempOptionsList);
+        // save options in user object
+        user.options.push(shuffleOptions);
+
+        for (let i = 0; i < shuffleOptions.length; i++) {
+          const option = createListItems();
+
+          option.innerHTML = `<input type="radio" id="option${
+            i + 1
+          }" name="user_answer" value="${shuffleOptions[i]}">
+              <label for="option${i + 1}">${shuffleOptions[i]}</label>`;
+          option.addEventListener("click", displayResult);
+          getOptionList.appendChild(option);
+        }
+
+        // Empty the tempOptionsList
+        for (let i = 0; i < tempOptionsList.length; i++) {
+          tempOptionsList.pop();
+        }
+        break;
+      case "boolean":
+        tempOptionsList.push(questions[questionNumber - 1].correct_answer); // add correct answer to the temporary Option List array
+        tempOptionsList.push(
+          questions[questionNumber - 1].incorrect_answers[0]
+        ); // add incorrect answer to the options array
+        const booleanOptions = shuffle(optionsList);
+        // save options in user object
+        user.options.push(booleanOptions);
+        for (let i = 0; i < booleanOptions.length; i++) {
+          const option = document.createElement("li");
+
+          option.innerHTML = `<input type="radio" id="option${
+            i + 1
+          }" name="user_answer" value="${booleanOptions[i]}">
+            <label for="option${i + 1}">${booleanOptions[i]}</label>`;
+          option.style.display = "block";
+          option.addEventListener("click", displayResult);
+          getOptionList.appendChild(option);
+        }
+
+        // Empty the tempOptionsList
+        for (let i = 0; i < tempOptionsList.length; i++) {
+          tempOptionsList.pop();
+        }
+        break;
+      default:
+        return;
+        break;
+    }
+  }
+};
+
+const displayResult = () => {
+  if (getUserChoice() !== undefined) {
+    result(user.currentQuestion);
+    // disable option buttons
+    let radios = document.getElementsByName("user_answer");
+    // loop through list of radio buttons
+    for (let i = 0; i < radios.length; i++) {
+      radios[i].disabled = true;
+    }
+  }
+};
+
+const getUserChoice = () => {
   let val;
   // get list of radio buttons with specified name
-  var radios = document.getElementsByName(name);
+  let radios = document.getElementsByName("user_answer");
 
   // loop through list of radio buttons
   for (let i = 0, len = radios.length; i < len; i++) {
     if (radios[i].checked) {
       // radio checked?
       val = radios[i].value; // if so, hold its value in val
+
       break; // and break out of for loop
     }
   }
+
   return val; // return value of checked radio or undefined if none checked
 };
 
-let result = (qn) => {
+const result = (qn) => {
   // qn stands for question number
-  // will take user response and compare it with correct answer
-  let userChoice = getUserChoice("user_answer");
+
+  let userChoice = getUserChoice();
   // save user choice in the user object
   user.userChoice = userChoice;
 
   let correct_answer = user.correct_answer;
-  // if user choice matches correct answer, user scores 1 point
-  // else user scores 0 point
-  const questionContainer = document.getElementById("question-container");
-  let feedback = document.createElement("div");
-  let correctAnswer = document.createElement("div");
 
-  questionContainer.appendChild(feedback);
-  if (user.userChoice === correct_answer[qn - 1]) {
-    user.scorePoint += 1;
-    feedback.innerText = userChoice;
-    feedback.style.backgroundColor = "#22bb33";
-    feedback.style.color = "#ffffff";
-    feedback.style.padding = "10px";
-  } else {
-    user.scorePoint += 0;
-    feedback.innerText = userChoice;
-    feedback.style.backgroundColor = "#bb2124";
-    feedback.style.color = "#ffffff";
-    feedback.style.padding = "10px";
-    feedback.style.marginBottom = "5px";
-    correctAnswer.innerText = correct_answer[qn - 1];
-    correctAnswer.style.borderColor = "#22bb33";
-    correctAnswer.style.borderWidth = "4px";
-    correctAnswer.style.borderStyle = "solid";
-    correctAnswer.style.color = "#222222";
-    correctAnswer.style.padding = "10px";
-    questionContainer.appendChild(correctAnswer);
+  let getPlayGameContainer = document.getElementById("play-game");
+  let result = createDiv("result");
+  let correctAnswer = createDiv("right-answer");
+  result.innerText = userChoice;
+  correctAnswer.innerText = correct_answer[qn - 1];
+
+  getPlayGameContainer.appendChild(result);
+  if (userChoice !== undefined) {
+    if (user.userChoice === correct_answer[qn - 1]) {
+      user.scorePoint += 1;
+      result.style.backgroundColor = "#22bb33";
+      result.style.color = "#ffffff";
+      result.style.padding = "10px";
+    } else {
+      user.scorePoint += 0;
+      result.style.backgroundColor = "#bb2124";
+      result.style.color = "#ffffff";
+      result.style.padding = "10px";
+      result.style.marginBottom = "5px";
+
+      correctAnswer.style.borderColor = "#22bb33";
+      correctAnswer.style.borderWidth = "4px";
+      correctAnswer.style.borderStyle = "solid";
+      correctAnswer.style.color = "#222222";
+      correctAnswer.style.padding = "10px";
+      getPlayGameContainer.appendChild(correctAnswer);
+    }
+
+    const nextQues = document.createElement("input");
+    nextQues.id = "nextques";
+    nextQues.type = "submit";
+    nextQues.value = "Next Question";
+    getPlayGameContainer.appendChild(nextQues);
+
+    // go to next Question
   }
-  const nextQues = document.createElement("input");
-  nextQues.id = "nextques";
-  nextQues.type = "submit";
-  nextQues.value = "Next Question";
-  questionContainer.appendChild(nextQues);
+
   // displays user option with green if correct
 
   // display user option with red if wrong and also display the right answer
   // display a next question button
 };
 
-let nextQuestion = (n) => {};
+const getNextQuestion = () => {
+  let nq = document.getElementById("nextques");
+  nq.addEventListener("onclick", nextQuestion(user.currentQuestion));
+};
+const nextQuestion = (n) => {
+  // clear previous display
+  // increment the next question property of the user object by 1
+  // load next question
+  // clear previousQuestion
+  //document.getElementById("options").innerText = "";
 
-let prevQuestion = () => {};
+  if (
+    document.getElementById("result") !== undefined ||
+    document.getElementById("result") !== null
+  ) {
+    document.getElementById("result").style.display = "none";
+    document.getElementById("nextques").style.display = "none";
+  }
+  if (
+    document.getElementById("correction") !== undefined ||
+    document.getElementById("correction") !== null
+  ) {
+    document.getElementById("correction").style.display = "none";
+  }
+
+  user.currentQuestion = n + 1;
+  loadQuestions(n + 1);
+  enableUserChoice();
+};
+
+const prevQuestion = () => {};
 
 window.onload = function () {
   //IF YOU ARE DISPLAYING ALL THE QUESTIONS TOGETHER:
@@ -423,20 +528,17 @@ window.onload = function () {
   //IF YOU ARE DISPLAYING ONE QUESTION AT A TIME
   //Display first question with a title + radio button
   //when the user select the answer, pick the next question and remove this from the page after added in a varible the users' choice.
-  let quizGame = document.querySelector("#quiz-game");
-  const section = document.createElement("section");
-  const header = document.createElement("h1");
-  header.innerText = "Quiz Game";
-  const start = startScreen();
-  const quesContainer = questionContainer();
 
-  quesContainer.style.display = "none";
+  initGame();
+  initGame().appendChild(startGameScreen());
 
-  section.appendChild(header);
-  section.appendChild(start);
-  section.appendChild(quesContainer);
-
-  quizGame.appendChild(section);
+  // const start = startScreen();
+  // const quesContainer = questionContainer();
+  // quesContainer.style.display = "none";
+  // section.appendChild(header);
+  // section.appendChild(start);
+  // section.appendChild(quesContainer);
+  // quizGame.appendChild(section);
 };
 
 //HOW TO calculate the result
