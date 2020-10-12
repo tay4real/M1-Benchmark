@@ -586,11 +586,16 @@ const endGame = () => {
     score.center;
   }
 
+  button.addEventListener("click", playAgain);
   center.appendChild(remark);
   center.appendChild(score);
   center.appendChild(button);
   endGame.appendChild(center);
   quizGame.appendChild(endGame);
+};
+
+const playAgain = () => {
+  location.reload();
 };
 
 window.onload = function () {
