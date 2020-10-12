@@ -10,15 +10,38 @@ body {
   font-size: 18px;
 }
 
-h1 {
-  text-align: center;
-  color: #f8f8f8;
-  font-size: 2rem;
-}
 #quiz-game {
   min-height: 100vh;
   display: flex;
   justify-content: space-around;
+}
+
+#start-screen {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 15px;
+  margin: 10px 0;
+}
+
+#play-game {
+  background-color: #ffffff;
+  border-left: 5px solid #1da1f2;
+  width: 80%;
+  margin: 3rem auto 0 auto;
+  padding: 1.5rem 2rem;
+}
+
+#end-game {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 15px;
+  margin: 10px 0;
+}
+
+h1 {
+  text-align: center;
+  color: #f8f8f8;
+  font-size: 2rem;
 }
 
 section {
@@ -32,21 +55,15 @@ section {
   margin-bottom: 50px;
 }
 
-#question-container {
-  background-color: #ffffff;
-  border-left: 5px solid #1da1f2;
-  width: 80%;
-  margin: 3rem auto 0 auto;
-  padding: 1.5rem 2rem;
-}
-
 #question {
   display: hide;
 }
 
-#options li {
+#option-list {
+  padding: 0;
+}
+#option-list li {
   list-style-type: none;
-  display: none;
 }
 
 select {
@@ -59,16 +76,9 @@ select {
   box-sizing: border-box;
 }
 
-.grid-2 {
-  border-radius: 5px;
-  background-color: #f2f2f2;
-  padding: 15px;
-  margin: 10px 0;
-}
-
 input[type="submit"] {
   width: 100%;
-  background-color: #4caf50;
+  background-color: #1da1f2;
   color: white;
   padding: 14px 20px;
   margin: 8px 0;
@@ -77,7 +87,7 @@ input[type="submit"] {
   cursor: pointer;
 }
 input[type="submit"]:hover {
-  background-color: #45a049;
+  background-color: #0668a5;
 }
 
 .hide {
