@@ -547,8 +547,50 @@ const nextQuestion = (n) => {
 };
 
 const endGame = () => {
-  let result = user.scorePoint;
-  let totalQuestion = user.totalQuestion;
+  let quizGame = document.querySelector("section");
+
+  let playGame = document.getElementById("play-game");
+  playGame.innerHTML = "";
+  quizGame.removeChild(playGame);
+
+  let endGame = createDiv("end-game", "center");
+
+  let center = createDiv("center", "center");
+
+  let remark = createDiv("remark", "");
+  let score = createDiv("percent-score", "circle");
+  let button = createInputButton("new-game", "submit", "Play Again");
+
+  let percentScore = (user.scorePoint / user.numberOfQuestions) * 100;
+  remark.style.textAlign = "center";
+  remark.style.fontSize = "18px";
+  score.style.margin = "auto";
+  if (percentScore >= 70) {
+    remark.innerHTML = `<p>Your Performance is Incredible. <br> Keep it Up</p><p>You Scored</p>`;
+    score.innerText = `${percentScore}%`;
+    score.style.backgroundColor = "#22bb33";
+    score.style.color = "#ffffff";
+    score.center;
+  } else if (percentScore >= 50 && percentScore < 70) {
+    remark.innerHTML = `<p>Your performance is good. You can do better</p><p>You Scored</p>`;
+    score.innerText = `${percentScore}%`;
+    score.style.backgroundColor = "#ffcc00";
+    score.style.color = "#ffffff";
+    score.center;
+  } else {
+    remark.innerHTML = `<p>Don't give up. Try Again</p><p>You Scored</p>`;
+    score.innerText = `${percentScore}%`;
+    score.style.backgroundColor = "#bb2124";
+    score.style.color = "#ffffff";
+    score.style.marginBottom = "20px";
+    score.center;
+  }
+
+  center.appendChild(remark);
+  center.appendChild(score);
+  center.appendChild(button);
+  endGame.appendChild(center);
+  quizGame.appendChild(endGame);
 };
 
 window.onload = function () {
