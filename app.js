@@ -16,7 +16,7 @@ const questions = [
     type: "multiple",
     difficulty: "easy",
     question:
-      "In the programming language Java, which of these keywords would you put on a variable to make sure it doesn&#039;t get modified?",
+      "In the programming language Java, which of these keywords would you put on a variable to make sure it doesn't get modified?",
     correct_answer: "Final",
     incorrect_answers: ["Static", "Private", "Public"],
   },
@@ -333,6 +333,13 @@ const playGameScreen = () => {
 };
 
 const loadQuestions = (questionNumber) => {
+  const getoptionsContainer = document.querySelector("#play-game");
+  if (!document.getElementById("option-list")) {
+    getoptionsContainer.appendChild(optionList);
+  }
+  if (document.getElementById("right-answer")) {
+    getPlayGameContainer.removeChild(document.getElementById("right-answer"));
+  }
   const getOptionList = document.querySelector("#option-list");
   const numofQues = user.numberOfQuestions;
 
@@ -376,10 +383,11 @@ const loadQuestions = (questionNumber) => {
         break;
       case "boolean":
         tempOptionsList.push(questions[questionNumber - 1].correct_answer); // add correct answer to the temporary Option List array
+        user.correct_answer.push(questions[questionNumber - 1].correct_answer);
         tempOptionsList.push(
           questions[questionNumber - 1].incorrect_answers[0]
         ); // add incorrect answer to the options array
-        const booleanOptions = shuffle(optionsList);
+        const booleanOptions = shuffle(tempOptionsList);
         // save options in user object
         user.options.push(booleanOptions);
         for (let i = 0; i < booleanOptions.length; i++) {
@@ -389,7 +397,7 @@ const loadQuestions = (questionNumber) => {
             i + 1
           }" name="user_answer" value="${booleanOptions[i]}">
             <label for="option${i + 1}">${booleanOptions[i]}</label>`;
-          option.style.display = "block";
+
           option.addEventListener("click", displayResult);
           getOptionList.appendChild(option);
         }
@@ -414,6 +422,11 @@ const displayResult = () => {
     // loop through list of radio buttons
     for (let i = 0; i < radios.length; i++) {
       radios[i].disabled = true;
+    }
+    // remove event listnener on all the list
+    let optionList = document.querySelectorAll("#option-list li");
+    for (let list of optionList) {
+      list.removeEventListener("click", displayResult);
     }
   }
 };
@@ -441,25 +454,24 @@ const result = (qn) => {
 
   let userChoice = getUserChoice();
   // save user choice in the user object
-  user.userChoice = userChoice;
-
+  user.userChoice.push(userChoice);
   let correct_answer = user.correct_answer;
 
   let getPlayGameContainer = document.getElementById("play-game");
   let result = createDiv("result");
   let correctAnswer = createDiv("right-answer");
   result.innerText = userChoice;
+  result.style.marginBottom = "10px";
   correctAnswer.innerText = correct_answer[qn - 1];
-
   getPlayGameContainer.appendChild(result);
   if (userChoice !== undefined) {
-    if (user.userChoice === correct_answer[qn - 1]) {
+    if (userChoice === correct_answer[qn - 1]) {
       user.scorePoint += 1;
       result.style.backgroundColor = "#22bb33";
       result.style.color = "#ffffff";
       result.style.padding = "10px";
+      result.style.marginBottom = "5px";
     } else {
-      user.scorePoint += 0;
       result.style.backgroundColor = "#bb2124";
       result.style.color = "#ffffff";
       result.style.padding = "10px";
@@ -473,13 +485,23 @@ const result = (qn) => {
       getPlayGameContainer.appendChild(correctAnswer);
     }
 
-    const nextQues = document.createElement("input");
-    nextQues.id = "nextques";
-    nextQues.type = "submit";
-    nextQues.value = "Next Question";
-    getPlayGameContainer.appendChild(nextQues);
+    const nextQues = createInputButton("nextques", "submit", "Next Question");
 
-    // go to next Question
+    let endgame = createInputButton("result_summary", "submit", "Game Over");
+
+    let totalQues = parseInt(user.numberOfQuestions);
+    let currentQues = user.currentQuestion;
+
+    if (currentQues < totalQues) {
+      nextQues.addEventListener("click", getNextQuestion);
+      getPlayGameContainer.appendChild(nextQues);
+    } else if (currentQues === totalQues) {
+      endgame.addEventListener("click", endGame);
+      endgame.style.backgroundColor = "#808000";
+      endgame.style.color = "#ffffff";
+
+      getPlayGameContainer.appendChild(endgame);
+    }
   }
 
   // displays user option with green if correct
@@ -490,35 +512,44 @@ const result = (qn) => {
 
 const getNextQuestion = () => {
   let nq = document.getElementById("nextques");
-  nq.addEventListener("onclick", nextQuestion(user.currentQuestion));
+  let totalQues = parseInt(user.numberOfQuestions);
+  let nextques = user.currentQuestion;
+
+  if (nextques < totalQues) {
+    nq.addEventListener("click", nextQuestion(user.currentQuestion));
+  } else if (nextques === totalQues) {
+    let endgame = createInputButton("show-result", "submit", "End Game");
+    endgame.addEventListener("click", endGame());
+  }
 };
+
 const nextQuestion = (n) => {
   // clear previous display
   // increment the next question property of the user object by 1
   // load next question
   // clear previousQuestion
   //document.getElementById("options").innerText = "";
+  const getPlayGameContainer = document.getElementById("play-game");
+  const getoptionsContainer = document.getElementById("option-list");
 
-  if (
-    document.getElementById("result") !== undefined ||
-    document.getElementById("result") !== null
-  ) {
-    document.getElementById("result").style.display = "none";
-    document.getElementById("nextques").style.display = "none";
+  if (document.getElementById("result")) {
+    getoptionsContainer.innerHTML = "";
+    getPlayGameContainer.removeChild(document.getElementById("result"));
+    getPlayGameContainer.removeChild(document.getElementById("nextques"));
   }
-  if (
-    document.getElementById("correction") !== undefined ||
-    document.getElementById("correction") !== null
-  ) {
-    document.getElementById("correction").style.display = "none";
+  if (document.getElementById("right-answer")) {
+    getPlayGameContainer.removeChild(document.getElementById("right-answer"));
   }
 
   user.currentQuestion = n + 1;
+
   loadQuestions(n + 1);
-  enableUserChoice();
 };
 
-const prevQuestion = () => {};
+const endGame = () => {
+  let result = user.scorePoint;
+  let totalQuestion = user.totalQuestion;
+};
 
 window.onload = function () {
   //IF YOU ARE DISPLAYING ALL THE QUESTIONS TOGETHER:
