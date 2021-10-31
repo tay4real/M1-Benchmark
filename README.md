@@ -1,4 +1,4 @@
-# M1-Benchmark
+# Quiz Game Application developed using Javascript
 QUIZ GAME!
         RULES:
         / The player must guess correctly a certain amount of questions
